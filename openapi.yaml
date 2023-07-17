@@ -1,0 +1,78 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: gpt-code-generator
+
+servers:
+  - url: http://localhost:5000
+    description: Local Flask Server
+
+paths:
+  /api/generate:
+    post:
+      summary: Generate Python code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenerateResponse'
+  
+  /api/exec-code:
+    post:
+      summary: Execute Python code
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ExecCodeRequest'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExecCodeResponse'
+
+components:
+  schemas:
+    GenerateRequest:
+      type: object
+      properties:
+        user_input:
+          type: string
+          description: User input
+    GenerateResponse:
+      type: object
+      properties:
+        generated_code:
+          type: string
+          description: Generated code
+
+    ExecCodeRequest:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Python code
+      example:
+        code: |
+          import os
+          a = 10
+          a
+          
+    ExecCodeResponse:
+      type: object
+      properties:
+        output:
+          type: string
+          description: Output of the code
+        message_type:
+          type: string
+          description: Type of the message

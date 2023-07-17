@@ -1,0 +1,12 @@
+flask
+flask_cors
+flask_restful
+openai
+python-dotenv
+
+datamodel-code-generator
+pydantic
+
+jupyter-client
+matplotlib
+pandas

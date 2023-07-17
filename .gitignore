@@ -1,0 +1,6 @@
+*.env*
+*test*
+*pyenv*
+*pycache*
+process_pids
+*kernel_connection*

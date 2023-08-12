@@ -4,11 +4,13 @@ import os
 from dotenv import load_dotenv
 import openai
 import json
+
 import pandas as pd
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
 from openpyxl import load_workbook
 from openpyxl.styles import Font
+
 
 load_dotenv()
 
@@ -283,4 +285,3 @@ class FinancialDataManager:
         # Excelファイルを保存
         wb.save(file_path)
 
-        

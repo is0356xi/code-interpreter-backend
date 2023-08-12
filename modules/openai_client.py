@@ -22,7 +22,7 @@ class OpenAIClient:
         # OpenAI APIを叩き生成処理を実行
         response = openai.ChatCompletion.create(
             engine=os.getenv("AZURE_OPENAI_DEPLOYMENT_NAME"),
-            api_version=os.getenv("AZURE_OPENAI_GPT_VERSION"),
+            api_version=os.getenv("AZURE_OPENAI_API_VERSION"),
             messages=messages,
             max_tokens=os.getenv("MAX_TOKENS"),
             temperature=0.5,
@@ -36,8 +36,11 @@ class OpenAIClient:
         return self._extract_code(response.choices[0].message.content)
     
     def _extract_code(self, text:str) -> str:
-        triple_match = re.search(r'```(?:\w+\n)?(.+?)```', text, re.DOTALL)
-        return triple_match.group(1).strip()
+        try:
+            triple_match = re.search(r'```(?:\w+\n)?(.+?)```', text, re.DOTALL)
+            return triple_match.group(1).strip()
+        except:
+            return "No code found."
     
 
 if __name__ == "__main__":

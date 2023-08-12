@@ -9,4 +9,10 @@ pydantic
 
 jupyter-client
 matplotlib
+japanize_matplotlib
 pandas
+
+azure-storage-blob
+
+pypdf
+openpyxl

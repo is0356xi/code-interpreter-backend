@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request
 from flask_restful import Resource, Api
 from flask_cors import CORS
@@ -27,6 +28,8 @@ app = Flask(__name__)
 CORS(app)
 api = Api(app)
 
+# Excelのローカルファイルパス
+EXCEL_PATH = "workspace/financial_data.xlsx"
 
 class Generate(Resource):
     def post(self):
@@ -55,6 +58,8 @@ class ExecCode(Resource):
 
         # コード実行処理
         output, message_type = execute_code(data.code, kernel_client)
+
+        print(output)
 
         # レスポンスを返す
         res = ExecCodeResponse(
@@ -89,6 +94,16 @@ class UploadFile(Resource):
 
         # 財務データ抽出処理
         financial_data = financial_data_manager.extract_financial_data(table_text)
+
+        # Excelファイルを作成し、ワークスペースに保存
+        financial_data_manager.create_excel(financial_data, EXCEL_PATH)
+
+        # ExcelファイルをBlobストレージに保存
+        blob_url = azure_client.upload_file(
+            container_name="excel", 
+            file_name=os.path.basename(EXCEL_PATH), 
+            file_content=open(EXCEL_PATH, "rb").read()
+        )
 
         # レスポンスを返す
         res = UploadFileResponse(

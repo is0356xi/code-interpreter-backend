@@ -14,6 +14,7 @@ import atexit
 import traceback
 from time import sleep
 from modules import config
+import re
 
 
 def start_kernel():
@@ -86,29 +87,44 @@ def execute_code(code:str, kernel_client) -> str:
     while True:
         msg = kc.get_iopub_msg()
         print(f"{msg}\n\n")
+
         msg_type = msg["header"]["msg_type"]
 
+        # 結果が画像の場合
         if msg_type == "display_data":
-            # 結果が画像の場合
             if "image/png" in msg["content"]["data"]:
                 result = msg["content"]["data"]["image/png"]
                 message_type = "image/png"
                 return result, message_type
-        
+
+
+        # 結果がテキストの場合
         if msg_type == "execute_result":
-            # 結果がテキストの場合
             if "text/plain" in msg["content"]["data"]:
                 result = msg["content"]["data"]["text/plain"]
                 message_type = "text/plain"
                 return result, message_type
+            
         
+        # 結果がstreamの場合
         if msg_type == "stream":
             return msg["content"]["text"], "text/plain"
 
+
+        # エラーの場合
+        if msg_type == "error":
+            traceback_str = "\n".join(msg["content"]["traceback"])
+            print(traceback_str)
+            readable_traceback = re.sub(r'\x1b\[.*?m', '', traceback_str)  # エスケープシーケンスを取り除く
+            return readable_traceback, "text/plain"
+
+
+        # カーネルの状態が idle（アイドル状態）ならループを終了
         if msg_type == "status":
-            # カーネルの状態が idle（アイドル状態）ならループを終了
             if msg["content"]["execution_state"] == "idle":
                 break
+        
+        
 
 if __name__ == "__main__":
     kc = start_kernel()

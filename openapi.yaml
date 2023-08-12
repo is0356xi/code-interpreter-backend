@@ -68,6 +68,7 @@ components:
         user_input:
           type: string
           description: User input
+          
     GenerateResponse:
       type: object
       properties:

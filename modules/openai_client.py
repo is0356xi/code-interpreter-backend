@@ -36,8 +36,11 @@ class OpenAIClient:
         return self._extract_code(response.choices[0].message.content)
     
     def _extract_code(self, text:str) -> str:
-        triple_match = re.search(r'```(?:\w+\n)?(.+?)```', text, re.DOTALL)
-        return triple_match.group(1).strip()
+        try:
+            triple_match = re.search(r'```(?:\w+\n)?(.+?)```', text, re.DOTALL)
+            return triple_match.group(1).strip()
+        except:
+            return "No code found."
     
 
 if __name__ == "__main__":

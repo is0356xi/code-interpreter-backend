@@ -5,6 +5,13 @@ from dotenv import load_dotenv
 import openai
 import json
 
+import pandas as pd
+from openpyxl import Workbook
+from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl import load_workbook
+from openpyxl.styles import Font
+
+
 load_dotenv()
 
 # FunctionCalling用のクラス
@@ -239,3 +246,42 @@ class FinancialDataManager:
                 data[key] = None
 
         return data
+    
+
+    def create_excel(self, data:dict, file_path:str):
+        # データフレームを作成
+        df = pd.DataFrame([data])
+
+        # Excelが存在する場合は読み込み、存在しない場合は新規作成
+        try:
+            wb = load_workbook(file_path)
+        except FileNotFoundError:
+            wb = Workbook()
+
+        # 会社名のシートが存在する場合は、そのシートに追記
+        if data["会社名"] in wb.sheetnames:
+            ws = wb[data["会社名"]]
+
+            # データを追記
+            for r in dataframe_to_rows(df, index=False, header=False):
+                ws.append(r)
+        else:
+            # 会社名のシートが存在しない場合は、新規作成
+            ws = wb.create_sheet(data["会社名"])
+            
+            # データを追記
+            for r in dataframe_to_rows(df, index=False, header=True):
+                ws.append(r)
+            
+            # ヘッダーのフォントを太字にする
+            for cell in ws[1]:
+                cell.font = Font(bold=True)
+
+        # 空のシートが存在する場合は削除
+        for sheet in wb.worksheets:
+            if sheet.title == "Sheet":
+                wb.remove(sheet)
+
+        # Excelファイルを保存
+        wb.save(file_path)
+

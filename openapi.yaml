@@ -40,6 +40,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/ExecCodeResponse'
 
+  /api/upload-file:
+    post:
+      summary: Upload file
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadFileResponse'
+
 components:
   schemas:
     GenerateRequest:
@@ -76,3 +96,16 @@ components:
         message_type:
           type: string
           description: Type of the message
+
+    UploadFileResponse:
+      type: object
+      properties:
+        file_name:
+          type: string
+          description: Uploaded file name
+        blob_url:
+          type: string
+          description: Uploaded file URL
+        financial_data:
+          type: object
+          description: Financial data

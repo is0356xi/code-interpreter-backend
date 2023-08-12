@@ -10,3 +10,7 @@ pydantic
 jupyter-client
 matplotlib
 pandas
+
+azure-storage-blob
+
+pypdf
